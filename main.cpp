@@ -14,9 +14,10 @@ int main(){
    getline(cin, input);
    istringstream stream(input);
 
-   int value;
+   int value, i = 0;
    while (stream >> value){
-       graph.addVweight(value);
+       graph.addVweight(i, value);
+       i++;
    }
 
    for (int i = 0; i < T; i++){

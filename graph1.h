@@ -1,16 +1,18 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef pair<int, int> vertex;
-typedef pair<vertex, vertex> pairs;
+typedef pair<int, int> pairs;
 
 //structure for graph
 struct graph {
     int V, E;
+    int *vertexWeight, *vertexRank;
+    bool *sum_check;
     vector<pair<int, pairs>> edges;
 
     graph(int V, int E);
 
+    void addVweight(int v, int vw);
     void addEdge(int u, int v, int w);
     void kruskalMST();
 };
@@ -18,7 +20,23 @@ struct graph {
 graph::graph(int V, int E){
     this->V = V;
     this->E = E;
+
+    vertexWeight = new int[V];
+    vertexRank = new int[V];
+    sum_check = new bool[V];
+
+    for (int i = 0; i < V; i++){
+        vertexRank[i] = 0;
+    }
+
+    for (int i = 0; i < V; i++){
+        sum_check[i] = false;
+    }
   }
+
+void graph::addVweight(int v, int vw){
+    vertexWeight[v] = vw;
+}
 
 void graph::addEdge(int u, int v, int w){
     edges.push_back({w, {u, v}});
@@ -64,7 +82,7 @@ void disjointSets::merge(int x, int y){
 }
 
 void graph::kruskalMST(){
-    int mst_wt = 0;
+    int mst_weight = 0, mst_attractiveness = 0;
 
     sort(edges.begin(), edges.end());
     disjointSets ds(V);
@@ -79,12 +97,33 @@ void graph::kruskalMST(){
 
         if (set_u != set_v){
             route.push_back({it->first, {u, v}});
-            mst_wt += it->first;
+            mst_weight += it->first;
+
+            vertexRank[u]++;
+            vertexRank[v]++;
+
+            //if (!sum_check[u]){
+                mst_attractiveness += vertexWeight[u];
+                sum_check[u] = true;
+            //}
+
+            //if (!sum_check[v]){
+                mst_attractiveness += vertexWeight[v];
+                sum_check[v] = true;
+            //}
+
             ds.merge(set_u, set_v);
         }
     }
 
-    cout << mst_wt << endl;
+    cout << mst_weight << " " << mst_attractiveness << endl;
+
+    for (int i = 0; i < V; i++){
+        if (sum_check[i]){
+            cout << vertexRank[i] << " ";
+        }
+    } cout << endl;
+
     for (it = route.begin(); it != route.end(); it++){
         cout << it->second.first << " " << it->second.second << " " << it->first << endl;
     }
