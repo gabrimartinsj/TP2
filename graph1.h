@@ -1,9 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// inicia tipo estrutura para pares de inteiros - representação para as arestas
 typedef pair<int, int> pairs;
 
-//structure for graph
+// estrutura grafo
 struct graph {
     int V, E;
     int *vertexWeight, *vertexRank;
@@ -64,14 +65,19 @@ disjointSets::disjointSets(int n){
 }
 
 int disjointSets::find(int u){
+    cout << "u: " << u << " parent u: " << parent[u] << endl;
     if (u != parent[u])
         parent[u] = find(parent[u]);
     return parent[u];
 }
 
 void disjointSets::merge(int x, int y){
+    cout << "x: " << x << " y: " << y << endl;
     x = find(x), y = find(y);
+    cout << "x: " << x << " y: " << y << endl;
 
+    cout << "parent x: " << parent[x] << " parent y: " << parent[y] << endl;
+    cout << "rank x: " << rank[x] << " rank y: " << rank[y] << endl;
     if (rank[x] > rank[y])
         parent[y] = x;
     else
@@ -95,6 +101,7 @@ void graph::kruskalMST(){
         int set_u = ds.find(u);
         int set_v = ds.find(v);
 
+        cout << "u: " << u << " v: " << v << endl;
         if (set_u != set_v){
             route.push_back({it->first, {u, v}});
             mst_weight += it->first;
@@ -102,16 +109,13 @@ void graph::kruskalMST(){
             vertexRank[u]++;
             vertexRank[v]++;
 
-            //if (!sum_check[u]){
-                mst_attractiveness += vertexWeight[u];
-                sum_check[u] = true;
-            //}
+            mst_attractiveness += vertexWeight[u];
+            sum_check[u] = true;
 
-            //if (!sum_check[v]){
-                mst_attractiveness += vertexWeight[v];
-                sum_check[v] = true;
-            //}
+            mst_attractiveness += vertexWeight[v];
+            sum_check[v] = true;
 
+            cout << "set u: " << set_u << " set v: " << set_v << endl;
             ds.merge(set_u, set_v);
         }
     }
